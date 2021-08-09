@@ -20,7 +20,8 @@ export class CanvasComponent implements OnInit {
     ECircleCount.MAX, // 400
   ];
   selectedSize: number = this.canvasSizes[0];
-  currentColor: string = '#000';
+  currentSize: number = this.selectedSize;
+  currentColor: string = '#000000';
 
   constructor(private storage: LocalStorageService) { }
 
@@ -30,6 +31,7 @@ export class CanvasComponent implements OnInit {
   }
 
   onGenerateCircles(): void {
+    this.currentSize=this.selectedSize
     this.resetColors()
     console.log('this.circles: ', this.circles);
   }
@@ -39,7 +41,12 @@ export class CanvasComponent implements OnInit {
   }
 
   onCircleClick(circle: ICircle): void {
-    this.circles[circle.id].color = this.currentColor;
+    let currentCircle = this.circles[circle.id];
+    if (currentCircle.color === this.currentColor) {
+      currentCircle.color = '#ffffff';
+    } else {
+      currentCircle.color = this.currentColor;
+    }
   }
 
   onResetColor(): void {
@@ -76,14 +83,19 @@ export class CanvasComponent implements OnInit {
     return String(Date.now());
   }
 
+  projectNameExists(): boolean {
+   return this.projectList.some((proj) => proj.name === this.projectName);
+  } 
+
   onSave(): void {
-    if (this.isEmpty(this.circles) || !this.projectName) {
+    if (this.isEmpty(this.circles) || !this.projectName || this.projectNameExists()) {
       return;
     }
     this.projectList.push({
       id: this.newId(),
       name: this.projectName,
       circles: this.circles,
+      size: this.selectedSize,
     })
     const projectsStr = JSON.stringify(this.projectList);
     this.storage.set(this.projectListName, projectsStr);
@@ -98,5 +110,15 @@ export class CanvasComponent implements OnInit {
 
   selectProject(project: IProject): void {
     this.circles = project.circles;
+    this.currentSize = project.size;
+  }
+
+  onProjectDelete(project:IProject): void {
+    const newProjectList = this.projectList.filter((proj) => project.id !== proj.id);
+    this.projectList = newProjectList;
+   
+    const projectsStr = JSON.stringify(this.projectList);
+    this.storage.set(this.projectListName, projectsStr);
   }
 }
+
