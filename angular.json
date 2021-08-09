@@ -101,7 +101,7 @@
               
             "deploy": {    "builder": "angular-cli-ghpages:deploy",  
                 "options": {    "baseHref": "https://github.com/AniCoding/Circleslevel2",    
-                  "name": "Cirlceslevel2",    "email": " ani.webdevelopment@gmail.com" 
+                  "name": "painting",    "email": " ani.webdevelopment@gmail.com" 
           }
         }
       }
